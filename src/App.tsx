@@ -5,6 +5,7 @@ import Index from "./pages/Index.tsx";
 import ProfilePage from "./pages/profile/page.tsx";
 import EditProfilePage from "./pages/profile/edit/page.tsx";
 import PublicProfilePage from "./pages/profile/public.tsx";
+import BoostPricingPage from "./pages/boost/page.tsx";
 import MarketplacePage from "./pages/marketplace/page.tsx";
 import ListingDetailPage from "./pages/listings/page.tsx";
 import CreateListingPage from "./pages/create-listing/page.tsx";
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/profile/edit" element={<EditProfilePage />} />
           <Route path="/users/:id" element={<PublicProfilePage />} />
+          <Route path="/boost" element={<BoostPricingPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

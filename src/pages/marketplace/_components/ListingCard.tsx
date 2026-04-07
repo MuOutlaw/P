@@ -48,8 +48,8 @@ export default function ListingCard(props: ListingCardProps) {
         )}
 
         {isFeatured && (
-          <div className="absolute top-2 right-2 bg-accent text-accent-foreground text-xs font-bold px-2 py-0.5 rounded-full">
-            مميّز
+          <div className="absolute top-2 right-2 bg-amber-400 text-amber-900 text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
+            ⭐ مميّز
           </div>
         )}
 

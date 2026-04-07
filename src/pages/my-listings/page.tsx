@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
@@ -16,11 +17,12 @@ import {
 import { toast } from "sonner";
 import { ConvexError } from "convex/values";
 import {
-  Plus, MoreVertical, Eye, Edit, CheckCircle2, RotateCcw, Trash2, Tag, MapPin, ShoppingBag,
+  Plus, MoreVertical, Eye, Edit, CheckCircle2, RotateCcw, Trash2, Tag, MapPin, ShoppingBag, Zap,
 } from "lucide-react";
 import Navbar from "../_components/Navbar.tsx";
 import Footer from "../_components/Footer.tsx";
 import { getCategoryEmoji, getCategoryLabel, timeAgo } from "@/lib/marketplace.ts";
+import BoostListingDialog from "./_components/BoostListingDialog.tsx";
 
 type Listing = {
   _id: Id<"listings">;
@@ -41,6 +43,7 @@ function ListingRow({ listing, onRefresh }: { listing: Listing; onRefresh: () =>
   const removeListing = useMutation(api.listings.mutations.remove);
   const markAsSold = useMutation(api.listings.mutations.markAsSold);
   const reactivate = useMutation(api.listings.mutations.reactivate);
+  const [boostOpen, setBoostOpen] = useState(false);
 
   const handleDelete = async () => {
     if (!confirm("هل أنت متأكد من حذف هذا الإعلان؟")) return;
@@ -166,11 +169,37 @@ function ListingRow({ listing, onRefresh }: { listing: Listing; onRefresh: () =>
             <Tag className="w-3 h-3" />
             {listing.price.toLocaleString("ar-SA")} ريال
           </span>
-          <span className="text-xs text-muted-foreground flex items-center gap-1">
-            <Eye className="w-3 h-3" /> {listing.views} مشاهدة · {timeAgo(listing.createdAt)}
-          </span>
+          <div className="flex items-center gap-2">
+            {listing.isFeatured && (
+              <span className="text-xs font-semibold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full flex items-center gap-1">
+                ⭐ مميّز
+              </span>
+            )}
+            {listing.status === "active" && (
+              <button
+                onClick={() => setBoostOpen(true)}
+                className="flex items-center gap-1 text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 px-2.5 py-1 rounded-full cursor-pointer transition-colors"
+              >
+                <Zap className="w-3 h-3" />
+                تمييز
+              </button>
+            )}
+            <span className="text-xs text-muted-foreground flex items-center gap-1">
+              <Eye className="w-3 h-3" /> {listing.views} · {timeAgo(listing.createdAt)}
+            </span>
+          </div>
         </div>
+
       </div>
+
+      {boostOpen && (
+        <BoostListingDialog
+          open={boostOpen}
+          onClose={() => setBoostOpen(false)}
+          listingId={listing._id}
+          listingTitle={listing.title}
+        />
+      )}
     </div>
   );
 }

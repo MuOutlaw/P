@@ -14,6 +14,7 @@ export default defineSchema({
     rating: v.number(),
     ratingCount: v.number(),
     joinedAt: v.string(),
+    customerId: v.optional(v.string()), // Hercules Commerce customer ID
   }).index("by_token", ["tokenIdentifier"]),
 
   listings: defineTable({
@@ -86,4 +87,21 @@ export default defineSchema({
     .index("by_ratedUser", ["ratedUserId"])
     .index("by_rater", ["raterId"])
     .index("by_ratedUser_and_rater", ["ratedUserId", "raterId"]),
+
+  // Premium boost orders — tracks which listings are boosted and for how long
+  boosts: defineTable({
+    listingId: v.id("listings"),
+    userId: v.id("users"),
+    packageId: v.string(),      // e.g. "featured_7d", "top_3d", "bundle_14d"
+    startsAt: v.string(),
+    expiresAt: v.string(),
+    isActive: v.boolean(),
+    // Payment info (filled when Commerce is connected)
+    paymentStatus: v.union(v.literal("pending"), v.literal("paid"), v.literal("free")),
+    customerId: v.optional(v.string()),
+    checkoutSessionId: v.optional(v.string()),
+  })
+    .index("by_listing", ["listingId"])
+    .index("by_user", ["userId"])
+    .index("by_active", ["isActive"]),
 });

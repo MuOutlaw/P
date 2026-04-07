@@ -10,6 +10,7 @@ import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "@/
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { CATEGORIES, SAUDI_CITIES } from "@/lib/marketplace.ts";
 import ListingCard from "./_components/ListingCard.tsx";
+import FeaturedListingsSection from "./_components/FeaturedListingsSection.tsx";
 import Navbar from "../_components/Navbar.tsx";
 import Footer from "../_components/Footer.tsx";
 import { useDebounce } from "@/hooks/use-debounce.ts";
@@ -61,6 +62,8 @@ export default function MarketplacePage() {
   return (
     <div className="min-h-screen bg-background" dir="rtl">
       <Navbar />
+
+      <FeaturedListingsSection />
 
       {/* Page Header */}
       <div className="bg-primary pt-10 pb-16 px-4">

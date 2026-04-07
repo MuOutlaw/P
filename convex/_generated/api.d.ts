@@ -8,6 +8,9 @@
  * @module
  */
 
+import type * as boosts_mutations from "../boosts/mutations.js";
+import type * as boosts_packages from "../boosts/packages.js";
+import type * as boosts_queries from "../boosts/queries.js";
 import type * as listings from "../listings.js";
 import type * as listings_mutations from "../listings/mutations.js";
 import type * as listings_queries from "../listings/queries.js";
@@ -24,6 +27,9 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  "boosts/mutations": typeof boosts_mutations;
+  "boosts/packages": typeof boosts_packages;
+  "boosts/queries": typeof boosts_queries;
   listings: typeof listings;
   "listings/mutations": typeof listings_mutations;
   "listings/queries": typeof listings_queries;

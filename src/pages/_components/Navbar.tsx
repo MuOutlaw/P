@@ -21,7 +21,7 @@ const navLinks = [
   { label: "الرئيسية", href: "/" },
   { label: "السوق", href: "/marketplace" },
   { label: "الفئات", href: "/#categories" },
-  { label: "كيف يعمل", href: "/#how-it-works" },
+  { label: "⚡ مميّز إعلانك", href: "/boost" },
 ];
 
 function UserMenu() {
