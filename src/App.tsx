@@ -8,6 +8,8 @@ import MarketplacePage from "./pages/marketplace/page.tsx";
 import ListingDetailPage from "./pages/listings/page.tsx";
 import CreateListingPage from "./pages/create-listing/page.tsx";
 import MyListingsPage from "./pages/my-listings/page.tsx";
+import MessagesPage from "./pages/messages/page.tsx";
+import ConversationPage from "./pages/messages/conversation.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 export default function App() {
@@ -20,6 +22,8 @@ export default function App() {
           <Route path="/listings/:id" element={<ListingDetailPage />} />
           <Route path="/create-listing" element={<CreateListingPage />} />
           <Route path="/my-listings" element={<MyListingsPage />} />
+          <Route path="/messages" element={<MessagesPage />} />
+          <Route path="/messages/:id" element={<ConversationPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/profile/edit" element={<EditProfilePage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
 import type { Id } from "@/convex/_generated/dataModel.d.ts";
+import ContactSellerDialog from "./_components/ContactSellerDialog.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
@@ -88,6 +89,7 @@ function ListingDetailContent({ id }: { id: Id<"listings"> }) {
   const listing = useQuery(api.listings.queries.getById, { id });
   const incrementViews = useMutation(api.listings.mutations.incrementViews);
   const navigate = useNavigate();
+  const [contactOpen, setContactOpen] = useState(false);
 
   // Increment view count once
   useEffect(() => {
@@ -300,7 +302,7 @@ function ListingDetailContent({ id }: { id: Id<"listings"> }) {
 
               <Authenticated>
                 <div className="space-y-2">
-                  <Button className="w-full font-semibold gap-2" onClick={() => toast.info("خاصية المحادثة قادمة قريبًا!")}>
+                  <Button className="w-full font-semibold gap-2" onClick={() => setContactOpen(true)}>
                     <MessageCircle className="w-4 h-4" />
                     مراسلة البائع
                   </Button>
@@ -342,6 +344,17 @@ function ListingDetailContent({ id }: { id: Id<"listings"> }) {
           </div>
         </div>
       </div>
+
+      {listing.seller && (
+        <ContactSellerDialog
+          open={contactOpen}
+          onClose={() => setContactOpen(false)}
+          sellerId={listing.userId}
+          sellerName={listing.seller.name ?? "البائع"}
+          listingId={listing._id}
+          listingTitle={listing.title}
+        />
+      )}
     </div>
   );
 }

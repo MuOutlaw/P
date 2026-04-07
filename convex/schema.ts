@@ -51,4 +51,26 @@ export default defineSchema({
       searchField: "title",
       filterFields: ["category", "city", "status"],
     }),
+
+  // Conversation between two users (possibly about a listing)
+  conversations: defineTable({
+    participantIds: v.array(v.id("users")), // always exactly 2
+    listingId: v.optional(v.id("listings")),
+    lastMessageAt: v.string(),
+    lastMessageText: v.optional(v.string()),
+    // unread counts per participant stored as a record
+    unreadCounts: v.record(v.string(), v.number()),
+  })
+    .index("by_lastMessageAt", ["lastMessageAt"])
+    .index("by_listing", ["listingId"]),
+
+  messages: defineTable({
+    conversationId: v.id("conversations"),
+    senderId: v.id("users"),
+    text: v.string(),
+    isRead: v.boolean(),
+    sentAt: v.string(),
+  })
+    .index("by_conversation", ["conversationId"])
+    .index("by_conversation_and_sentAt", ["conversationId", "sentAt"]),
 });

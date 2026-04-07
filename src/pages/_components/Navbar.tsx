@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button.tsx";
-import { Menu, X, User, LogOut, Settings, ChevronDown, ShoppingBag } from "lucide-react";
+import { Menu, X, User, LogOut, Settings, ChevronDown, ShoppingBag, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 import { useQuery } from "convex/react";
@@ -26,6 +26,7 @@ const navLinks = [
 
 function UserMenu() {
   const user = useQuery(api.users.getCurrentUser, {});
+  const unreadCount = useQuery(api.messages.queries.getTotalUnread, {});
   const { removeUser } = useAuth();
   const navigate = useNavigate();
 
@@ -64,6 +65,14 @@ function UserMenu() {
         <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => navigate("/my-listings")}>
           <ShoppingBag className="w-4 h-4" /> إعلاناتي
         </DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => navigate("/messages")}>
+          <MessageCircle className="w-4 h-4" /> رسائلي
+          {!!unreadCount && unreadCount > 0 && (
+            <span className="mr-auto w-5 h-5 rounded-full bg-destructive text-white text-[10px] font-bold flex items-center justify-center">
+              {unreadCount > 9 ? "9+" : unreadCount}
+            </span>
+          )}
+        </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => navigate("/profile/edit")}>
           <Settings className="w-4 h-4" /> إعدادات الحساب
         </DropdownMenuItem>
@@ -76,6 +85,25 @@ function UserMenu() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+}
+
+function MessagesButton() {
+  const navigate = useNavigate();
+  const unreadCount = useQuery(api.messages.queries.getTotalUnread, {});
+  return (
+    <button
+      onClick={() => navigate("/messages")}
+      className="relative w-9 h-9 rounded-xl border border-border flex items-center justify-center cursor-pointer hover:bg-muted transition-colors"
+      aria-label="الرسائل"
+    >
+      <MessageCircle className="w-4 h-4 text-foreground/70" />
+      {!!unreadCount && unreadCount > 0 && (
+        <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-destructive text-white text-[9px] font-bold flex items-center justify-center">
+          {unreadCount > 9 ? "9+" : unreadCount}
+        </span>
+      )}
+    </button>
   );
 }
 
@@ -132,6 +160,7 @@ export default function Navbar() {
               >
                 + نشر إعلان
               </Button>
+              <MessagesButton />
               <UserMenu />
             </Authenticated>
           </div>
