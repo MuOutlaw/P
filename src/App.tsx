@@ -5,7 +5,7 @@ import Index from "./pages/Index.tsx";
 import ProfilePage from "./pages/profile/page.tsx";
 import EditProfilePage from "./pages/profile/edit/page.tsx";
 import MarketplacePage from "./pages/marketplace/page.tsx";
-import ListingPage from "./pages/listing/page.tsx";
+import ListingDetailPage from "./pages/listings/page.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 export default function App() {
@@ -15,7 +15,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/marketplace" element={<MarketplacePage />} />
-          <Route path="/listing/:id" element={<ListingPage />} />
+          <Route path="/listings/:id" element={<ListingDetailPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/profile/edit" element={<EditProfilePage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />

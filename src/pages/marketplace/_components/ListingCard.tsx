@@ -1,116 +1,98 @@
-import { Doc } from "@/convex/_generated/dataModel.js";
-import { BadgeCheck, MapPin, Eye, Star, Tag } from "lucide-react";
+import { BadgeCheck, Eye, MapPin, Tag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { formatPrice, getCategoryEmoji } from "@/lib/marketplace.ts";
-import { cn } from "@/lib/utils.ts";
+import { getCategoryEmoji, getCategoryLabel, timeAgo } from "@/lib/marketplace.ts";
+import type { Id } from "@/convex/_generated/dataModel.d.ts";
 
-type ListingWithUser = Doc<"listings"> & {
-  user: Doc<"users"> | null;
+type ListingCardProps = {
+  _id: Id<"listings">;
+  title: string;
+  price: number;
+  priceType: string;
+  category: string;
+  city: string;
+  images: string[];
+  views: number;
+  isFeatured: boolean;
+  createdAt: string;
+  status: string;
+  seller: { name?: string; isVerified: boolean; rating: number } | null;
 };
 
-type Props = {
-  listing: ListingWithUser;
-  featured?: boolean;
-};
-
-const PLACEHOLDER_COLORS: Record<string, string> = {
-  camels: "from-amber-100 to-amber-200",
-  sheep: "from-emerald-100 to-emerald-200",
-  cattle: "from-stone-100 to-stone-200",
-  goats: "from-lime-100 to-lime-200",
-  feed: "from-yellow-100 to-yellow-200",
-  farms: "from-green-100 to-green-200",
-  services: "from-blue-100 to-blue-200",
-  transport: "from-slate-100 to-slate-200",
-};
-
-export default function ListingCard({ listing, featured = false }: Props) {
+export default function ListingCard(props: ListingCardProps) {
   const navigate = useNavigate();
-  const placeholderGradient = PLACEHOLDER_COLORS[listing.category] ?? "from-muted to-muted/60";
+  const {
+    _id, title, price, priceType, category, city,
+    images, views, isFeatured, createdAt, seller,
+  } = props;
+
+  const image = images[0];
 
   return (
     <div
-      onClick={() => navigate(`/listing/${listing._id}`)}
-      className={cn(
-        "bg-white rounded-2xl border border-border overflow-hidden cursor-pointer",
-        "hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 group",
-        featured && "ring-2 ring-accent/60"
-      )}
+      onClick={() => navigate(`/listings/${_id}`)}
+      className="bg-white rounded-2xl border border-border overflow-hidden cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 group"
     >
       {/* Image */}
-      <div className="relative aspect-[4/3] overflow-hidden">
-        {listing.images.length > 0 ? (
+      <div className="relative aspect-[4/3] bg-muted overflow-hidden">
+        {image ? (
           <img
-            src={listing.images[0]}
-            alt={listing.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            src={image}
+            alt={title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
-          <div className={cn("w-full h-full bg-gradient-to-br flex items-center justify-center text-5xl", placeholderGradient)}>
-            {getCategoryEmoji(listing.category)}
+          <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground gap-2">
+            <span className="text-4xl">{getCategoryEmoji(category)}</span>
+            <span className="text-xs">{getCategoryLabel(category)}</span>
           </div>
         )}
-        {/* Badges */}
-        <div className="absolute top-2 right-2 flex flex-col gap-1">
-          {featured && (
-            <span className="bg-accent text-accent-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">
-              مميز
-            </span>
-          )}
-          {listing.priceType === "negotiable" && (
-            <span className="bg-white/90 text-muted-foreground text-[10px] font-medium px-2 py-0.5 rounded-full">
-              قابل للتفاوض
-            </span>
-          )}
-        </div>
-        {/* Views */}
-        <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/40 text-white text-[10px] px-2 py-0.5 rounded-full">
+
+        {isFeatured && (
+          <div className="absolute top-2 right-2 bg-accent text-accent-foreground text-xs font-bold px-2 py-0.5 rounded-full">
+            مميّز
+          </div>
+        )}
+
+        <div className="absolute top-2 left-2 bg-black/40 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
           <Eye className="w-3 h-3" />
-          {listing.views}
+          {views}
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-3">
-        <h3 className="font-bold text-foreground text-sm leading-tight line-clamp-2 mb-1">
-          {listing.title}
-        </h3>
+      <div className="p-4">
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <h3 className="font-bold text-foreground text-sm leading-tight line-clamp-2 flex-1">{title}</h3>
+          <span className="flex items-center gap-1 text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0">
+            {getCategoryEmoji(category)} {getCategoryLabel(category)}
+          </span>
+        </div>
 
-        <div className="text-lg font-black text-primary mb-2">
-          {formatPrice(listing.price)}
+        <div className="flex items-center gap-1 text-primary font-black text-lg mb-3">
+          <Tag className="w-3.5 h-3.5" />
+          {price.toLocaleString("ar-SA")}
+          <span className="text-xs font-normal text-muted-foreground">
+            ريال{priceType === "negotiable" ? " · قابل للتفاوض" : ""}
+          </span>
         </div>
 
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
             <MapPin className="w-3 h-3" />
-            <span>{listing.city}</span>
+            {city}
           </div>
-          <div className="flex items-center gap-1">
-            <Tag className="w-3 h-3" />
-            <span>{getCategoryEmoji(listing.category)}</span>
-          </div>
+
+          {seller && (
+            <div className="flex items-center gap-1 max-w-[120px]">
+              {seller.isVerified && <BadgeCheck className="w-3.5 h-3.5 text-primary flex-shrink-0" />}
+              <span className="truncate">{seller.name ?? "بائع"}</span>
+            </div>
+          )}
         </div>
 
-        {/* Seller info */}
-        {listing.user && (
-          <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-border">
-            <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
-              {listing.user.name?.[0] ?? "م"}
-            </div>
-            <span className="text-xs text-muted-foreground truncate flex-1">
-              {listing.user.name ?? "بائع"}
-            </span>
-            {listing.user.isVerified && (
-              <BadgeCheck className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-            )}
-            {listing.user.rating > 0 && (
-              <div className="flex items-center gap-0.5">
-                <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                <span className="text-xs font-medium">{listing.user.rating.toFixed(1)}</span>
-              </div>
-            )}
-          </div>
-        )}
+        <div className="mt-2 text-xs text-muted-foreground/60 text-left" dir="ltr">
+          {timeAgo(createdAt)}
+        </div>
       </div>
     </div>
   );
