@@ -8,6 +8,8 @@
  * @module
  */
 
+import type * as listings from "../listings.js";
+import type * as listings_queries from "../listings/queries.js";
 import type * as users from "../users.js";
 
 import type {
@@ -17,6 +19,8 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  listings: typeof listings;
+  "listings/queries": typeof listings_queries;
   users: typeof users;
 }>;
 

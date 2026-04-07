@@ -13,8 +13,8 @@ export default function HeroSection() {
         <img
           src={HERO_IMG}
           alt="سوق المواشي"
-          className="w-full h-full object-cover"
-        />
+          className="w-full h-full object-cover" />
+        
         <div className="absolute inset-0 bg-gradient-to-l from-primary/95 via-primary/80 to-primary/40" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
       </div>
@@ -29,8 +29,8 @@ export default function HeroSection() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-          >
+            transition={{ duration: 0.7, ease: "easeOut" }}>
+            
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-6">
               <ShieldCheck className="w-4 h-4 text-accent" />
               <span className="text-white text-sm font-medium">المنصة الأولى لتداول المواشي في المملكة</span>
@@ -51,8 +51,8 @@ export default function HeroSection() {
                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="ابحث عن إبل، غنم، أبقار..."
-                  className="pr-9 border-0 bg-transparent focus-visible:ring-0 text-foreground"
-                />
+                  className="pr-9 border-0 bg-transparent focus-visible:ring-0 text-foreground" />
+                
               </div>
               <div className="flex items-center gap-1 px-3 border-r border-border text-muted-foreground cursor-pointer hover:text-primary transition-colors">
                 <MapPin className="w-4 h-4" />
@@ -64,29 +64,29 @@ export default function HeroSection() {
             </div>
 
             <div className="flex flex-wrap gap-3 mb-8">
-              {["إبل", "أغنام", "أبقار", "أعلاف", "مزارع"].map((tag) => (
-                <button
-                  key={tag}
-                  className="bg-white/15 backdrop-blur-sm border border-white/25 text-white text-sm px-4 py-1.5 rounded-full hover:bg-white/25 transition-colors cursor-pointer"
-                >
+              {["إبل", "أغنام", "أبقار", "أعلاف", "مزارع"].map((tag) =>
+              <button
+                key={tag}
+                className="bg-white/15 backdrop-blur-sm border border-white/25 text-white text-sm px-4 py-1.5 rounded-full hover:bg-white/25 transition-colors cursor-pointer">
+                
                   {tag}
                 </button>
-              ))}
+              )}
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">
               <Button
                 size="lg"
-                className="bg-accent text-accent-foreground hover:bg-accent/90 font-bold text-base px-8"
-              >
+                className="bg-accent text-accent-foreground hover:bg-accent/90 font-bold text-base px-8">
+                
                 ابدأ البيع الآن
                 <ArrowLeft className="w-4 h-4 mr-2" />
               </Button>
               <Button
                 size="lg"
                 variant="ghost"
-                className="text-white border border-white/30 hover:bg-white/10 font-semibold"
-              >
+                className="text-white border border-white/30 hover:bg-white/10 font-semibold">
+                
                 تصفح الإعلانات
               </Button>
             </div>
@@ -98,23 +98,23 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
-          className="absolute bottom-8 left-4 right-4 md:left-auto md:right-8 flex gap-3 justify-center md:justify-end"
-        >
+          className="absolute bottom-8 left-4 right-4 md:left-auto md:right-8 flex gap-3 justify-center md:justify-end">
+          
           {[
-            { value: "+٥٠٠٠", label: "إعلان نشط" },
-            { value: "+١٢٠٠٠", label: "مستخدم موثوق" },
-            { value: "٢٤/٧", label: "دعم متواصل" },
-          ].map((stat) => (
-            <div
-              key={stat.label}
-              className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-4 py-3 text-center"
-            >
-              <div className="text-xl font-black text-white">{stat.value}</div>
-              <div className="text-xs text-white/70 mt-0.5">{stat.label}</div>
-            </div>
-          ))}
+          { value: "+٥٠٠٠", label: "إعلان نشط" },
+          { value: "+١٢٠٠٠", label: "مستخدم موثوق" },
+          { value: "٢٤/٧", label: "دعم متواصل" }].
+          map((stat) => {}
+
+
+
+
+
+
+
+          )}
         </motion.div>
       </div>
-    </section>
-  );
+    </section>);
+
 }
