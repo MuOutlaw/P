@@ -20,6 +20,8 @@ import type * as notifications_mutations from "../notifications/mutations.js";
 import type * as notifications_queries from "../notifications/queries.js";
 import type * as ratings_mutations from "../ratings/mutations.js";
 import type * as ratings_queries from "../ratings/queries.js";
+import type * as reports_mutations from "../reports/mutations.js";
+import type * as reports_queries from "../reports/queries.js";
 import type * as savedListings from "../savedListings.js";
 import type * as users from "../users.js";
 
@@ -42,6 +44,8 @@ declare const fullApi: ApiFromModules<{
   "notifications/queries": typeof notifications_queries;
   "ratings/mutations": typeof ratings_mutations;
   "ratings/queries": typeof ratings_queries;
+  "reports/mutations": typeof reports_mutations;
+  "reports/queries": typeof reports_queries;
   savedListings: typeof savedListings;
   users: typeof users;
 }>;

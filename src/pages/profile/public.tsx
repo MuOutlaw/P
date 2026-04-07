@@ -7,13 +7,14 @@ import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
-import { BadgeCheck, MapPin, Calendar, MessageCircle, Star, ArrowRight } from "lucide-react";
+import { BadgeCheck, MapPin, Calendar, MessageCircle, Star, ArrowRight, Flag } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import { ar } from "date-fns/locale";
 import Navbar from "../_components/Navbar.tsx";
 import Footer from "../_components/Footer.tsx";
 import StarRating from "@/components/StarRating.tsx";
 import RateUserDialog from "./_components/RateUserDialog.tsx";
+import ReportDialog from "@/components/ReportDialog.tsx";
 import { SignInButton } from "@/components/ui/signin.tsx";
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "@/components/ui/empty.tsx";
 import { useMutation } from "convex/react";
@@ -49,6 +50,7 @@ function RatingDistribution({ ratings }: { ratings: { score: number }[] }) {
 function PublicProfileContent({ userId }: { userId: Id<"users"> }) {
   const navigate = useNavigate();
   const [rateOpen, setRateOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
   const user = useQuery(api.users.getUserById, { userId });
   const ratings = useQuery(api.ratings.queries.getForUser, { userId });
   const myRating = useQuery(api.ratings.queries.getMyRatingForUser, { ratedUserId: userId });
@@ -133,6 +135,13 @@ function PublicProfileContent({ userId }: { userId: Id<"users"> }) {
                       <Star className="w-4 h-4" />
                       {myRating ? "تعديل تقييمي" : "قيّم"}
                     </Button>
+                    <button
+                      onClick={() => setReportOpen(true)}
+                      className="w-8 h-8 rounded-lg border border-border flex items-center justify-center cursor-pointer hover:bg-destructive/10 hover:border-destructive/30 transition-colors"
+                      title="الإبلاغ عن المستخدم"
+                    >
+                      <Flag className="w-3.5 h-3.5 text-muted-foreground" />
+                    </button>
                   </Authenticated>
                   <Unauthenticated>
                     <SignInButton>
@@ -258,6 +267,14 @@ function PublicProfileContent({ userId }: { userId: Id<"users"> }) {
           ratedUserName={user.name ?? "المستخدم"}
         />
       )}
+
+      <ReportDialog
+        type="user"
+        targetId={userId}
+        targetTitle={user.name ?? "مستخدم"}
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+      />
     </div>
   );
 }

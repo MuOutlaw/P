@@ -88,6 +88,35 @@ export default defineSchema({
     .index("by_rater", ["raterId"])
     .index("by_ratedUser_and_rater", ["ratedUserId", "raterId"]),
 
+  // Reports submitted by users about listings or other users
+  reports: defineTable({
+    reporterId: v.id("users"),
+    targetType: v.union(v.literal("listing"), v.literal("user")),
+    targetListingId: v.optional(v.id("listings")),
+    targetUserId: v.optional(v.id("users")),
+    reason: v.union(
+      v.literal("spam"),
+      v.literal("fraud"),
+      v.literal("inappropriate"),
+      v.literal("wrong_category"),
+      v.literal("fake_price"),
+      v.literal("other")
+    ),
+    details: v.optional(v.string()),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("reviewed"),
+      v.literal("dismissed")
+    ),
+    createdAt: v.string(),
+    reviewedAt: v.optional(v.string()),
+    reviewNote: v.optional(v.string()),
+  })
+    .index("by_reporter", ["reporterId"])
+    .index("by_status", ["status"])
+    .index("by_target_listing", ["targetListingId"])
+    .index("by_target_user", ["targetUserId"]),
+
   // In-app notifications
   notifications: defineTable({
     userId: v.id("users"),       // recipient

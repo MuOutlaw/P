@@ -4,6 +4,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
 import type { Id } from "@/convex/_generated/dataModel.d.ts";
 import ContactSellerDialog from "./_components/ContactSellerDialog.tsx";
+import ReportDialog from "@/components/ReportDialog.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
@@ -11,7 +12,7 @@ import { toast } from "sonner";
 import {
   MapPin, Phone, MessageCircle, BadgeCheck, Star,
   Tag, Eye, Calendar, ArrowRight, Share2, ChevronLeft, ChevronRight,
-  Weight, Dna, Users,
+  Weight, Dna, Users, Flag,
 } from "lucide-react";
 import { getCategoryLabel, getCategoryEmoji, timeAgo } from "@/lib/marketplace.ts";
 import Navbar from "../_components/Navbar.tsx";
@@ -90,6 +91,7 @@ function ListingDetailContent({ id }: { id: Id<"listings"> }) {
   const incrementViews = useMutation(api.listings.mutations.incrementViews);
   const navigate = useNavigate();
   const [contactOpen, setContactOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
 
   // Increment view count once
   useEffect(() => {
@@ -157,12 +159,23 @@ function ListingDetailContent({ id }: { id: Id<"listings"> }) {
           <div>
             <div className="flex items-start justify-between gap-3 mb-2">
               <h1 className="text-2xl font-black text-foreground leading-tight">{listing.title}</h1>
-              <button
-                onClick={handleShare}
-                className="w-9 h-9 rounded-xl border border-border flex items-center justify-center cursor-pointer hover:bg-muted transition-colors flex-shrink-0"
-              >
-                <Share2 className="w-4 h-4 text-muted-foreground" />
-              </button>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <button
+                  onClick={handleShare}
+                  className="w-9 h-9 rounded-xl border border-border flex items-center justify-center cursor-pointer hover:bg-muted transition-colors"
+                >
+                  <Share2 className="w-4 h-4 text-muted-foreground" />
+                </button>
+                <Authenticated>
+                  <button
+                    onClick={() => setReportOpen(true)}
+                    className="w-9 h-9 rounded-xl border border-border flex items-center justify-center cursor-pointer hover:bg-destructive/10 hover:border-destructive/30 transition-colors"
+                    title="الإبلاغ عن الإعلان"
+                  >
+                    <Flag className="w-4 h-4 text-muted-foreground hover:text-destructive" />
+                  </button>
+                </Authenticated>
+              </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-4">
@@ -360,6 +373,14 @@ function ListingDetailContent({ id }: { id: Id<"listings"> }) {
           listingTitle={listing.title}
         />
       )}
+
+      <ReportDialog
+        type="listing"
+        targetId={listing._id}
+        targetTitle={listing.title}
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+      />
     </div>
   );
 }
