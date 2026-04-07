@@ -16,8 +16,12 @@ import AnalyticsDashboardPage from "./pages/analytics/page.tsx";
 import NotificationsPage from "./pages/notifications/page.tsx";
 import SavedListingsPage from "./pages/saved/page.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import { useServiceWorker } from "@/hooks/use-service-worker.ts";
+import PWAInstallBanner from "@/components/PWAInstallBanner.tsx";
 
 export default function App() {
+  useServiceWorker();
+
   return (
     <DefaultProviders>
       <BrowserRouter>
@@ -40,6 +44,7 @@ export default function App() {
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <PWAInstallBanner />
       </BrowserRouter>
     </DefaultProviders>
   );

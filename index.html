@@ -1,51 +1,84 @@
 <!doctype html>
-<html lang="en">
+<html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Alsfat</title>
-    <meta name="description" content="An app made by https://.alsfat.com" />
-    <meta name="author" content="Hercules" />
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>"
-    />
+    <!-- Primary SEO -->
+    <title>الصفاة | سوق الماشية والمواشي في السعودية والخليج</title>
+    <meta name="description" content="الصفاة — منصة رقمية متخصصة في بيع وشراء الإبل والأغنام والأبقار والماعز والأعلاف والمزارع في المملكة العربية السعودية ودول الخليج. تصفح آلاف الإعلانات من بائعين موثوقين." />
+    <meta name="keywords" content="سوق ماشية, بيع إبل, شراء أغنام, بيع أبقار, ماعز للبيع, أعلاف, مزارع, سوق مواشي, السعودية, الخليج, الصفاة" />
+    <meta name="author" content="الصفاة Al-Safah" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://alsafah.onhercules.app/" />
 
-    <meta property="og:title" content="Alsfat.com" />
-    <meta property="og:description" content="An app made by https://.alsfat.com" />
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta
-      property="og:image"
-      content="https://hercules.app/og/app/%VITE_HERCULES_WEBSITE_ID%.png"
-    />
+    <meta property="og:url" content="https://alsafah.onhercules.app/" />
+    <meta property="og:title" content="الصفاة | سوق الماشية والمواشي في السعودية والخليج" />
+    <meta property="og:description" content="منصة رقمية متخصصة في بيع وشراء الإبل والأغنام والأبقار والماعز في المملكة العربية السعودية ودول الخليج." />
+    <meta property="og:image" content="https://hercules.app/og/app/%VITE_HERCULES_WEBSITE_ID%.png" />
     <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="ar_SA" />
+    <meta property="og:site_name" content="الصفاة" />
 
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:image"
-      content="https://hercules.app/og/app/%VITE_HERCULES_WEBSITE_ID%.png"
-    />
     <meta name="twitter:site" content="@usehercules" />
+    <meta name="twitter:title" content="الصفاة | سوق الماشية والمواشي" />
+    <meta name="twitter:description" content="بيع وشراء الإبل والأغنام والأبقار في السعودية والخليج." />
+    <meta name="twitter:image" content="https://hercules.app/og/app/%VITE_HERCULES_WEBSITE_ID%.png" />
+
+    <!-- PWA Configuration -->
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#16a34a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="الصفاة" />
+    <link rel="apple-touch-icon" href="/icon/icon-192.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon/icon-192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon/icon-512.png" />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "الصفاة",
+      "alternateName": "Al-Safah Marketplace",
+      "url": "https://alsafah.onhercules.app/",
+      "description": "سوق رقمي متخصص في بيع وشراء الماشية والمواشي في المملكة العربية السعودية والخليج",
+      "inLanguage": "ar",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://alsafah.onhercules.app/marketplace?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Montserrat:ital,opsz,wght@0,100..900;1,100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
       crossorigin
     />
 
-    <!-- Detect dark mode preference and set the class before next-themes loads. This avoids a flash of unstyled content (FOUC) when the page loads. -->
+    <!-- Dark mode detection (prevent FOUC) -->
     <script>
       try {
         let theme = localStorage.getItem("theme");
         if (theme === "system" || !theme) {
-          let prefersDark = window.matchMedia(
-            "(prefers-color-scheme: dark)",
-          ).matches;
+          let prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
           theme = prefersDark ? "dark" : "light";
         }
         document.documentElement.classList.add(theme);
