@@ -88,6 +88,16 @@ export default defineSchema({
     .index("by_rater", ["raterId"])
     .index("by_ratedUser_and_rater", ["ratedUserId", "raterId"]),
 
+  // Saved/favorited listings per user
+  savedListings: defineTable({
+    userId: v.id("users"),
+    listingId: v.id("listings"),
+    savedAt: v.string(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_listing", ["listingId"])
+    .index("by_user_and_listing", ["userId", "listingId"]),
+
   // Premium boost orders — tracks which listings are boosted and for how long
   boosts: defineTable({
     listingId: v.id("listings"),

@@ -1,7 +1,12 @@
-import { BadgeCheck, Eye, MapPin, Tag } from "lucide-react";
+import { BadgeCheck, Eye, Heart, MapPin, Tag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api.js";
 import { getCategoryEmoji, getCategoryLabel, timeAgo } from "@/lib/marketplace.ts";
 import type { Id } from "@/convex/_generated/dataModel.d.ts";
+import { useAuth } from "@/hooks/use-auth.ts";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils.ts";
 
 type ListingCardProps = {
   _id: Id<"listings">;
@@ -17,6 +22,41 @@ type ListingCardProps = {
   status: string;
   seller: { name?: string; isVerified: boolean; rating: number } | null;
 };
+
+function SaveButton({ listingId }: { listingId: Id<"listings"> }) {
+  const { user } = useAuth();
+  const isSaved = useQuery(api.savedListings.isSaved, user ? { listingId } : "skip");
+  const toggleSave = useMutation(api.savedListings.toggleSave);
+
+  const handleClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) {
+      toast.error("يجب تسجيل الدخول لحفظ الإعلانات");
+      return;
+    }
+    try {
+      const result = await toggleSave({ listingId });
+      toast.success(result.saved ? "تم حفظ الإعلان ❤️" : "تم إلغاء الحفظ");
+    } catch {
+      toast.error("حدث خطأ، حاول مجدداً");
+    }
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      className={cn(
+        "absolute bottom-2 left-2 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer",
+        isSaved
+          ? "bg-red-500 text-white hover:bg-red-600"
+          : "bg-white/80 backdrop-blur-sm text-muted-foreground hover:bg-white hover:text-red-500"
+      )}
+      title={isSaved ? "إلغاء الحفظ" : "حفظ الإعلان"}
+    >
+      <Heart className={cn("w-4 h-4", isSaved && "fill-current")} />
+    </button>
+  );
+}
 
 export default function ListingCard(props: ListingCardProps) {
   const navigate = useNavigate();
@@ -57,6 +97,8 @@ export default function ListingCard(props: ListingCardProps) {
           <Eye className="w-3 h-3" />
           {views}
         </div>
+
+        <SaveButton listingId={_id} />
       </div>
 
       {/* Content */}

@@ -12,6 +12,7 @@ import CreateListingPage from "./pages/create-listing/page.tsx";
 import MyListingsPage from "./pages/my-listings/page.tsx";
 import MessagesPage from "./pages/messages/page.tsx";
 import ConversationPage from "./pages/messages/conversation.tsx";
+import SavedListingsPage from "./pages/saved/page.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 export default function App() {
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="/profile/edit" element={<EditProfilePage />} />
           <Route path="/users/:id" element={<PublicProfilePage />} />
           <Route path="/boost" element={<BoostPricingPage />} />
+          <Route path="/saved" element={<SavedListingsPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

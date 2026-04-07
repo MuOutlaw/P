@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button.tsx";
-import { Menu, X, User, LogOut, Settings, ChevronDown, ShoppingBag, MessageCircle } from "lucide-react";
+import { Menu, X, User, LogOut, Settings, ChevronDown, ShoppingBag, MessageCircle, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 import { useQuery } from "convex/react";
@@ -61,6 +61,9 @@ function UserMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => navigate("/profile")}>
           <User className="w-4 h-4" /> ملفي الشخصي
+        </DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => navigate("/saved")}>
+          <Heart className="w-4 h-4" /> المحفوظات
         </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => navigate("/my-listings")}>
           <ShoppingBag className="w-4 h-4" /> إعلاناتي
@@ -157,9 +160,14 @@ export default function Navbar() {
                 size="sm"
                 className="font-semibold"
                 onClick={() => navigate("/create-listing")}>
-                
                 + نشر إعلان
               </Button>
+              <button
+                onClick={() => navigate("/saved")}
+                className="w-9 h-9 rounded-xl border border-border flex items-center justify-center cursor-pointer hover:bg-muted transition-colors"
+                aria-label="المحفوظات">
+                <Heart className="w-4 h-4 text-foreground/70" />
+              </button>
               <MessagesButton />
               <UserMenu />
             </Authenticated>
