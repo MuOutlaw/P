@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button.tsx";
-import { Menu, X, User, LogOut, Settings, ChevronDown, ShoppingBag, MessageCircle, Heart } from "lucide-react";
+import { Menu, X, User, LogOut, Settings, ChevronDown, ShoppingBag, MessageCircle, Heart, Bell } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 import { useQuery } from "convex/react";
@@ -62,6 +62,9 @@ function UserMenu() {
         <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => navigate("/profile")}>
           <User className="w-4 h-4" /> ملفي الشخصي
         </DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => navigate("/notifications")}>
+          <Bell className="w-4 h-4" /> الإشعارات
+        </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => navigate("/saved")}>
           <Heart className="w-4 h-4" /> المحفوظات
         </DropdownMenuItem>
@@ -108,6 +111,24 @@ function MessagesButton() {
       }
     </button>);
 
+}
+
+function NotificationsButton() {
+  const navigate = useNavigate();
+  const unreadCount = useQuery(api.notifications.queries.getUnreadCount, {});
+  return (
+    <button
+      onClick={() => navigate("/notifications")}
+      className="relative w-9 h-9 rounded-xl border border-border flex items-center justify-center cursor-pointer hover:bg-muted transition-colors"
+      aria-label="الإشعارات">
+      <Bell className="w-4 h-4 text-foreground/70" />
+      {!!unreadCount && unreadCount > 0 &&
+        <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-destructive text-white text-[9px] font-bold flex items-center justify-center">
+          {unreadCount > 9 ? "9+" : unreadCount}
+        </span>
+      }
+    </button>
+  );
 }
 
 export default function Navbar() {
@@ -168,6 +189,7 @@ export default function Navbar() {
                 aria-label="المحفوظات">
                 <Heart className="w-4 h-4 text-foreground/70" />
               </button>
+              <NotificationsButton />
               <MessagesButton />
               <UserMenu />
             </Authenticated>

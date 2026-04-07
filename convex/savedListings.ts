@@ -1,11 +1,12 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { ConvexError } from "convex/values";
+import { internal } from "./_generated/api.js";
 
 // Toggle save/unsave a listing
 export const toggleSave = mutation({
   args: { listingId: v.id("listings") },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<{ saved: boolean }> => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new ConvexError({ message: "يجب تسجيل الدخول أولاً", code: "UNAUTHENTICATED" });
 
@@ -31,6 +32,20 @@ export const toggleSave = mutation({
         listingId: args.listingId,
         savedAt: new Date().toISOString(),
       });
+
+      // Notify the listing owner (not if saving own listing)
+      const listing = await ctx.db.get(args.listingId);
+      if (listing && listing.userId !== user._id) {
+        await ctx.scheduler.runAfter(0, internal.notifications.mutations.createNotification, {
+          userId: listing.userId,
+          type: "listing_saved",
+          title: "حفظ إعلانك",
+          body: `${user.name ?? "مستخدم"} حفظ إعلانك "${listing.title}"`,
+          listingId: args.listingId,
+          actorId: user._id,
+        });
+      }
+
       return { saved: true };
     }
   },

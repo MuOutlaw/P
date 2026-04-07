@@ -88,6 +88,29 @@ export default defineSchema({
     .index("by_rater", ["raterId"])
     .index("by_ratedUser_and_rater", ["ratedUserId", "raterId"]),
 
+  // In-app notifications
+  notifications: defineTable({
+    userId: v.id("users"),       // recipient
+    type: v.union(
+      v.literal("new_message"),     // someone sent you a message
+      v.literal("new_rating"),      // someone rated you
+      v.literal("listing_saved"),   // someone saved your listing
+      v.literal("listing_sold"),    // you marked a listing as sold
+      v.literal("boost_expired"),   // your boost expired
+      v.literal("listing_inquiry")  // someone enquired about your listing
+    ),
+    title: v.string(),
+    body: v.string(),
+    isRead: v.boolean(),
+    // Optional links
+    listingId: v.optional(v.id("listings")),
+    conversationId: v.optional(v.id("conversations")),
+    actorId: v.optional(v.id("users")),   // who triggered this notification
+    createdAt: v.string(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_and_isRead", ["userId", "isRead"]),
+
   // Saved/favorited listings per user
   savedListings: defineTable({
     userId: v.id("users"),

@@ -1,5 +1,6 @@
 import { mutation } from "../_generated/server";
 import { v, ConvexError } from "convex/values";
+import { internal } from "../_generated/api.js";
 
 // Submit or update a rating for a user
 export const submitRating = mutation({
@@ -9,7 +10,7 @@ export const submitRating = mutation({
     comment: v.optional(v.string()),
     listingId: v.optional(v.id("listings")),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<void> => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new ConvexError({ code: "UNAUTHENTICATED", message: "يجب تسجيل الدخول" });
 
@@ -30,7 +31,6 @@ export const submitRating = mutation({
     const ratedUser = await ctx.db.get(args.ratedUserId);
     if (!ratedUser) throw new ConvexError({ code: "NOT_FOUND", message: "المستخدم غير موجود" });
 
-    // Check for existing rating
     const existing = await ctx.db
       .query("ratings")
       .withIndex("by_ratedUser_and_rater", (q) =>
@@ -39,19 +39,16 @@ export const submitRating = mutation({
       .unique();
 
     if (existing) {
-      // Update existing rating
       const oldScore = existing.score;
       await ctx.db.patch(existing._id, {
         score: args.score,
         comment: args.comment,
       });
-      // Recalculate average: remove old, add new
       const newTotal = ratedUser.rating * ratedUser.ratingCount - oldScore + args.score;
       await ctx.db.patch(args.ratedUserId, {
         rating: newTotal / ratedUser.ratingCount,
       });
     } else {
-      // New rating
       await ctx.db.insert("ratings", {
         raterId: me._id,
         ratedUserId: args.ratedUserId,
@@ -60,12 +57,22 @@ export const submitRating = mutation({
         comment: args.comment,
         createdAt: new Date().toISOString(),
       });
-      // Recalculate average
       const newCount = ratedUser.ratingCount + 1;
       const newRating = (ratedUser.rating * ratedUser.ratingCount + args.score) / newCount;
       await ctx.db.patch(args.ratedUserId, {
         rating: newRating,
         ratingCount: newCount,
+      });
+
+      // Notify the rated user
+      const stars = "★".repeat(args.score) + "☆".repeat(5 - args.score);
+      await ctx.scheduler.runAfter(0, internal.notifications.mutations.createNotification, {
+        userId: args.ratedUserId,
+        type: "new_rating",
+        title: "تقييم جديد",
+        body: `${me.name ?? "مستخدم"} أعطاك تقييم ${stars} (${args.score}/5)${args.comment ? `: ${args.comment.slice(0, 60)}` : ""}`,
+        listingId: args.listingId,
+        actorId: me._id,
       });
     }
   },
@@ -74,7 +81,7 @@ export const submitRating = mutation({
 // Delete a rating (only the rater can delete their own)
 export const deleteRating = mutation({
   args: { ratedUserId: v.id("users") },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<void> => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new ConvexError({ code: "UNAUTHENTICATED", message: "يجب تسجيل الدخول" });
 

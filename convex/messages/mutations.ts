@@ -1,6 +1,7 @@
 import { mutation } from "../_generated/server";
 import { v } from "convex/values";
 import { ConvexError } from "convex/values";
+import { internal } from "../_generated/api.js";
 import type { Id } from "../_generated/dataModel.d.ts";
 
 // Start or get existing conversation, return conversationId
@@ -10,7 +11,7 @@ export const startConversation = mutation({
     listingId: v.optional(v.id("listings")),
     initialMessage: v.string(),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<Id<"conversations">> => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new ConvexError({ message: "غير مصرح", code: "UNAUTHENTICATED" });
 
@@ -42,7 +43,6 @@ export const startConversation = mutation({
     const now = new Date().toISOString();
 
     if (!conversationId) {
-      // Create new conversation
       conversationId = await ctx.db.insert("conversations", {
         participantIds: [user._id, args.otherUserId],
         listingId: args.listingId,
@@ -52,7 +52,6 @@ export const startConversation = mutation({
       });
     }
 
-    // Insert the first message
     await ctx.db.insert("messages", {
       conversationId: conversationId as Id<"conversations">,
       senderId: user._id,
@@ -73,6 +72,20 @@ export const startConversation = mutation({
       });
     }
 
+    // Notify the other user
+    const listing = args.listingId ? await ctx.db.get(args.listingId) : null;
+    await ctx.scheduler.runAfter(0, internal.notifications.mutations.createNotification, {
+      userId: args.otherUserId,
+      type: "listing_inquiry",
+      title: "استفسار جديد عن إعلانك",
+      body: listing
+        ? `${user.name ?? "مستخدم"} يستفسر عن "${listing.title}": ${args.initialMessage.slice(0, 60)}`
+        : `رسالة جديدة من ${user.name ?? "مستخدم"}`,
+      listingId: args.listingId,
+      conversationId: conversationId as Id<"conversations">,
+      actorId: user._id,
+    });
+
     return conversationId;
   },
 });
@@ -83,7 +96,7 @@ export const sendMessage = mutation({
     conversationId: v.id("conversations"),
     text: v.string(),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<void> => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new ConvexError({ message: "غير مصرح", code: "UNAUTHENTICATED" });
 
@@ -109,7 +122,6 @@ export const sendMessage = mutation({
       sentAt: now,
     });
 
-    // Update conversation
     const newUnread = { ...conversation.unreadCounts };
     if (otherId) {
       newUnread[otherId] = (newUnread[otherId] ?? 0) + 1;
@@ -119,13 +131,25 @@ export const sendMessage = mutation({
       lastMessageText: args.text,
       unreadCounts: newUnread,
     });
+
+    // Notify the other participant
+    if (otherId) {
+      await ctx.scheduler.runAfter(0, internal.notifications.mutations.createNotification, {
+        userId: otherId,
+        type: "new_message",
+        title: "رسالة جديدة",
+        body: `${user.name ?? "مستخدم"}: ${args.text.slice(0, 80)}`,
+        conversationId: args.conversationId,
+        actorId: user._id,
+      });
+    }
   },
 });
 
 // Mark all messages in a conversation as read for current user
 export const markConversationRead = mutation({
   args: { conversationId: v.id("conversations") },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<void> => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) return;
 
@@ -142,7 +166,6 @@ export const markConversationRead = mutation({
     newUnread[user._id] = 0;
     await ctx.db.patch(args.conversationId, { unreadCounts: newUnread });
 
-    // Mark all unread messages as read
     const unreadMessages = await ctx.db
       .query("messages")
       .withIndex("by_conversation", (q) => q.eq("conversationId", args.conversationId))
