@@ -131,6 +131,25 @@ export const getByUser = query({
   },
 });
 
+// Get listings for the currently authenticated user (no args needed)
+export const getMyListings = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return [];
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .unique();
+    if (!user) return [];
+    return await ctx.db
+      .query("listings")
+      .withIndex("by_userId", (q) => q.eq("userId", user._id))
+      .order("desc")
+      .collect();
+  },
+});
+
 export const incrementViews = query({
   args: { id: v.id("listings") },
   handler: async (ctx, args) => {

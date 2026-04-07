@@ -73,4 +73,17 @@ export default defineSchema({
   })
     .index("by_conversation", ["conversationId"])
     .index("by_conversation_and_sentAt", ["conversationId", "sentAt"]),
+
+  // Ratings left by one user for another, optionally tied to a listing
+  ratings: defineTable({
+    raterId: v.id("users"),      // who left the rating
+    ratedUserId: v.id("users"),  // who received the rating
+    listingId: v.optional(v.id("listings")),
+    score: v.number(),           // 1–5
+    comment: v.optional(v.string()),
+    createdAt: v.string(),
+  })
+    .index("by_ratedUser", ["ratedUserId"])
+    .index("by_rater", ["raterId"])
+    .index("by_ratedUser_and_rater", ["ratedUserId", "raterId"]),
 });

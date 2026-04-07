@@ -10,9 +10,12 @@ import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 import Navbar from "../_components/Navbar.tsx";
 import Footer from "../_components/Footer.tsx";
+import StarRating from "@/components/StarRating.tsx";
 
 function ProfileContent() {
   const user = useQuery(api.users.getCurrentUser, {});
+  const myListings = useQuery(api.listings.queries.getMyListings, {});
+  const myRatings = useQuery(api.ratings.queries.getForUser, user ? { userId: user._id } : "skip");
   const navigate = useNavigate();
 
   if (user === undefined) {
@@ -68,12 +71,10 @@ function ProfileContent() {
                 )}
               </div>
               {user.rating > 0 && (
-                <div className="flex items-center gap-1 mt-0.5">
-                  <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
-                  <span className="text-sm font-semibold">{user.rating.toFixed(1)}</span>
-                  <span className="text-xs text-muted-foreground">({user.ratingCount} تقييم)</span>
-                </div>
-              )}
+            <div className="flex items-center gap-2 mt-0.5">
+              <StarRating score={user.rating} size="sm" showNumber count={user.ratingCount} />
+            </div>
+          )}
             </div>
           </div>
 
@@ -107,8 +108,8 @@ function ProfileContent() {
       {/* Stats Row */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         {[
-          { label: "الإعلانات", value: "٠" },
-          { label: "الصفقات", value: "٠" },
+          { label: "الإعلانات", value: myListings !== undefined ? myListings.length.toString() : "—" },
+          { label: "الصفقات المُكتملة", value: myListings !== undefined ? myListings.filter(l => l.status === "sold").length.toString() : "—" },
           { label: "التقييم", value: user.rating > 0 ? user.rating.toFixed(1) : "—" },
         ].map((s) => (
           <div key={s.label} className="bg-white rounded-xl border border-border p-4 text-center">
@@ -117,6 +118,32 @@ function ProfileContent() {
           </div>
         ))}
       </div>
+
+      {/* Ratings received */}
+      {myRatings && myRatings.length > 0 && (
+        <div className="mt-6 bg-white rounded-2xl border border-border p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-black text-foreground">تقييماتك</h2>
+            <span className="text-sm text-muted-foreground">{myRatings.length} تقييم</span>
+          </div>
+          <div className="space-y-4">
+            {myRatings.slice(0, 3).map((r) => (
+              <div key={r._id} className="flex gap-3">
+                <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm shrink-0">
+                  {r.rater?.name?.charAt(0) ?? "م"}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-sm">{r.rater?.name ?? "مستخدم"}</span>
+                  </div>
+                  <StarRating score={r.score} size="sm" />
+                  {r.comment && <p className="text-xs text-muted-foreground mt-0.5">{r.comment}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Verification Banner */}
       {!user.isVerified && (

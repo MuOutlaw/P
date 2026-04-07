@@ -280,7 +280,12 @@ function ListingDetailContent({ id }: { id: Id<"listings"> }) {
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <span className="font-bold text-foreground">{listing.seller.name ?? "بائع"}</span>
+                    <button
+                      onClick={() => navigate(`/users/${listing.userId}`)}
+                      className="font-bold text-foreground hover:text-primary cursor-pointer transition-colors"
+                    >
+                      {listing.seller.name ?? "بائع"}
+                    </button>
                     {listing.seller.isVerified && (
                       <BadgeCheck className="w-4 h-4 text-primary" />
                     )}
@@ -288,7 +293,7 @@ function ListingDetailContent({ id }: { id: Id<"listings"> }) {
                   {listing.seller.rating > 0 && (
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                      {listing.seller.rating.toFixed(1)}
+                      {listing.seller.rating.toFixed(1)} ({listing.seller.ratingCount ?? 0})
                     </div>
                   )}
                   {listing.seller.city && (
