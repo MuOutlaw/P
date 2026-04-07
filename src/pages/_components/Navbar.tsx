@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button.tsx";
-import { Menu, X, User, LogOut, Settings, ChevronDown, ShoppingBag, MessageCircle, Heart, Bell } from "lucide-react";
+import { Menu, X, User, LogOut, Settings, ChevronDown, ShoppingBag, MessageCircle, Heart, Bell, BarChart2 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 import { useQuery } from "convex/react";
@@ -70,6 +70,9 @@ function UserMenu() {
         </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => navigate("/my-listings")}>
           <ShoppingBag className="w-4 h-4" /> إعلاناتي
+        </DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => navigate("/analytics")}>
+          <BarChart2 className="w-4 h-4" /> إحصائياتي
         </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => navigate("/messages")}>
           <MessageCircle className="w-4 h-4" /> رسائلي

@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as analytics_queries from "../analytics/queries.js";
 import type * as boosts_mutations from "../boosts/mutations.js";
 import type * as boosts_packages from "../boosts/packages.js";
 import type * as boosts_queries from "../boosts/queries.js";
@@ -32,6 +33,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  "analytics/queries": typeof analytics_queries;
   "boosts/mutations": typeof boosts_mutations;
   "boosts/packages": typeof boosts_packages;
   "boosts/queries": typeof boosts_queries;
